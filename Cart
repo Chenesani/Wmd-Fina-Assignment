@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Your Cart | Pet Parents</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    header, footer {
+      background-color: #222;
+      color: #fff;
+      padding: 1em;
+      text-align: center;
+    }
+    nav {
+      background-color: #444;
+      padding: 0.5em;
+      text-align: center;
+    }
+    nav a {
+      color: #fff;
+      margin: 0 1em;
+      text-decoration: none;
+    }
+    main {
+      max-width: 800px;
+      margin: 2em auto;
+      background-color: #fff;
+      padding: 2em;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 1em;
+    }
+    .cart-item {
+      display: flex;
+      align-items: flex-start;
+      border-bottom: 1px solid #ddd;
+      padding: 1em 0;
+    }
+    .cart-item img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      margin-right: 1em;
+    }
+    .cart-item-details {
+      flex: 1;
+    }
+    .cart-item-details p {
+      margin: 0.3em 0;
+    }
+    .price {
+      font-weight: bold;
+      color: #b12704;
+    }
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      margin: 0.5em 0;
+    }
+    .quantity-controls button {
+      background-color: #ddd;
+      border: none;
+      padding: 0.5em;
+      cursor: pointer;
+    }
+    .quantity-controls input {
+      width: 40px;
+      text-align: center;
+      border: 1px solid #ddd;
+      margin: 0 0.5em;
+    }
+    .summary {
+      margin-top: 2em;
+      text-align: right;
+    }
+    .summary p {
+      margin: 0.5em 0;
+    }
+    .checkout-btn {
+      background-color: #222;
+      color: #fff;
+      padding: 0.8em 2em;
+      border: none;
+      cursor: pointer;
+      font-size: 1em;
+      margin-top: 1em;
+    }
+    .checkout-btn:hover {
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Pet Parents</h1>
+    <p>Your Shopping Cart</p>
+  </header>
+  <nav>
+    <a href="Home of Pet Parents.html">Home</a>
+    <a href="Eat 3.html">Eat</a>
+    <a href="Walk 3.html">Walk</a>
+    <a href="Wear 3.html">Wear</a>
+    <a href="Play 3.html">Play</a>
+    <a href="Sale 3.html">Sale</a>
+    <a href="About us 3.html">About Us</a>
+    <a href="Cart 2.html">Cart</a>
+  </nav>
+  <main>
+    <h2>Items in Your Cart</h2>
+    <div id="cart-items"></div>
+    <div class="summary">
+      <p>Subtotal: BWP <span id="subtotal">0.00</span></p>
+      <p>Delivery Fee: BWP 30.00</p>
+      <p><strong>Total: BWP <span id="total">0.00</span></strong></p>
+      <button class="checkout-btn" onclick="checkout()">Checkout</button>
+    </div>
+  </main>
+  <footer>
+    <p>&copy; 2025 Pet Parents. All rights reserved.</p>
+    <p>Contact us: info@petparents.com | +267 123 4567</p>
+  </footer>
+
+  <script>
+    const deliveryFee = 30;
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    function renderCart() {
+      const cartItemsContainer = document.getElementById('cart-items');
+      cartItemsContainer.innerHTML = '';
+      let subtotal = 0;
+
+      cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+        cartItemsContainer.innerHTML += `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.product}" />
+            <div class="cart-item-details">
+              <p><strong>${item.product}</strong></p>
+              <p><em>${item.description || 'No description provided.'}</em></p>
+              <p>Size: ${item.size}</p>
+              <div class="quantity-controls">
+                <button onclick="changeQuantity('${item.product}', '${item.size}', -1)">-</button>
+                <input type="text" value="${item.quantity}" readonly />
+                <button onclick="changeQuantity('${item.product}', '${item.size}', 1)">+</button>
+              </div>
+              <p class="price">BWP ${(item.price * item.quantity).toFixed(2)}</p>
+              <button onclick="removeFromCart('${item.product}', '${item.size}')">Remove</button>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('subtotal').innerText = subtotal.toFixed(2);
+      document.getElementById('total').innerText = (subtotal + deliveryFee).toFixed(2);
+    }
+
+    function changeQuantity(product, size, change) {
+      const item = cart.find(item => item.product === product && item.size === size);
+      if (item) {
+        item.quantity += change;
+        if (item.quantity <= 0) {
+          removeFromCart(product, size);
+        } else {
+          localStorage.setItem('cart', JSON.stringify(cart));
+          renderCart();
+        }
+      }
+    }
+
+    function removeFromCart(product, size) {
+      cart = cart.filter(item => !(item.product === product && item.size === size));
+      localStorage.setItem('cart', JSON.stringify(cart));
+      renderCart();
+    }
+
+    function checkout() {
+      alert('Thank you for your purchase! Proceeding to checkout...');
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>
+
